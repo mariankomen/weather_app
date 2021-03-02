@@ -7,25 +7,21 @@ const App = () => {
 
     const [weather, setWeather] = useState({})
 
-    //api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
-
-
-    const GET_DATA = async (e) => {
-        e.preventDefault()
-        const GotData = await fetch(`${API_URL}${city}&appid=${API_KEY}`)
-        const data = await GotData.json()
-        setWeather(data)
-    }
+    useEffect(()=>{
+        async function GetData(){
+            const GotData = await fetch(`${API_URL}${city}&appid=${API_KEY}`)
+            const data = await GotData.json()
+            setWeather(data)
+        }
+        GetData()
+    })
 
 
     return (
         <div>
             App
             <button
-                onClick={GET_DATA}
-            >Click me</button>
-            <button
-                onClick={()=> console.log(weather)}
+                onClick={()=> console.log(weather.name, weather.weather)}
             >Show weather</button>
         </div>
     )
