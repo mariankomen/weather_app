@@ -5,9 +5,10 @@ import WeatherForm from "../weather-form/weather-form";
 
 const App = () => {
     const [weather, setWeather] = useState({})
-    const [City, setCity] = useState('Lviv')
+    // const [City, setCity] = useState('Lviv')
     const [WeatherCityChanger, setWeatherCityChanger] = useState('')
     const [show, setShow] = useState(false)
+    const [userCity, setUserCity] = useState([])
 
     // useEffect(()=>{
     //     async function GetData(){
@@ -24,7 +25,7 @@ const App = () => {
     // }, [City])
 
     const GetData = async () => {
-        await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${City}&appid=3fdcc41eff12a3a45c84d5ac296850cd`)
+        await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${WeatherCityChanger}&appid=3fdcc41eff12a3a45c84d5ac296850cd`)
             .then(res => {
                 const data = res.data
                 console.log(res);
@@ -33,16 +34,36 @@ const App = () => {
             })
     }
 
+
+    async function GetUserLocation () {
+        await axios.get('https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,\n' +
+            '+Mountain+View,+CA&key=AIzaSyCXQHAI3kZw9279nsoMtaYAhIgTDiN-h1c')
+            .then(res => console.log('Ptro',res))
+            .catch((error)=> console.log("Xuy ", error))
+    }
+
+    geocode()
+
+    function geocode(){
+        let location = 'Lviv'
+        axios.get('https://maps.googleapis.com/maps/api/geocode/json',{
+            params:{
+                address: location,
+                key: 'AIzaSyADKtSKw3mAAwuoe0NEhK3Z0EOGjph7o6U'
+            }
+        })
+        .then(function (response){
+            //console.log(response)
+
+            console.log(response.data.results[0])
+            })
+        .catch(function (error){
+            console.log(error)
+        })
+    }
     const OnCityChange = (e) => {
         setWeatherCityChanger(e.target.value)
-        console.log(`City is: ${WeatherCityChanger}`)
     }
-
-    const SubmitCity = () => {
-        setCity(WeatherCityChanger)
-        console.log(City)
-    }
-
 
     return (
         <div>
@@ -50,21 +71,24 @@ const App = () => {
                               WeatherCityChanger={WeatherCityChanger}
             />
 
-
             <button
-                onClick={()=>{
-                    SubmitCity();
+                onClick={() => {
                     GetData();
+                    // SubmitCity();
                     setShow(true);
                 }}
             >
                 Submit City
             </button>
+
             {show && <WeatherForm name={weather.name}
-
                                   timezone={weather.timezone}
-
             />}
+            <button
+                onClick={GetUserLocation}
+            >ShowCity
+            </button>
+
         </div>
 
     )
