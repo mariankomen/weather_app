@@ -34,7 +34,7 @@ const App = () => {
 
     //Get user geolocation weather
     const GetUserWeather = async () => {
-        await axios.get(`${process.env.REACT_APP_API_URL}lat=${userLonLat.latitude}&lon=${userLonLat.longitude}&units=metric&APPID=${process.env.REACT_APP_API_KEY}`)
+        await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${userLonLat.latitude}&lon=${userLonLat.longitude}&units=metric&APPID=${process.env.REACT_APP_API_KEY}`)
             .then(res => {
                 setUserGeoWeather({
                     name: res.data.name,
@@ -53,7 +53,7 @@ const App = () => {
 
     //Get weather by city from input area
     const GetData = async () => {
-        await axios.get(`${process.env.REACT_APP_API_URL}q=${WeatherCityChanger}&appid=${process.env.REACT_APP_API_KEY}`)
+        await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${WeatherCityChanger}&appid=${process.env.REACT_APP_API_KEY}`)
             .then(res => {
                 setWeather({
                     name: res.data.name,
