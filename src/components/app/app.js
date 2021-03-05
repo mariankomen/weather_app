@@ -4,94 +4,69 @@ import axios from 'axios'
 import WeatherForm from "../weather-form/weather-form";
 
 const App = () => {
+
     const [weather, setWeather] = useState({})
-    // const [City, setCity] = useState('Lviv')
     const [WeatherCityChanger, setWeatherCityChanger] = useState('')
+    const [userLonLat, setUserLonLat] = useState({})
     const [show, setShow] = useState(false)
-    const [userCity, setUserCity] = useState([])
 
-    // useEffect(()=>{
-    //     async function GetData(){
-    //         const GotData = await fetch(`${process.env.API_URL}${City}&appid=${process.env.API_KEY}`, {
-    //                 headers : {
-    //                     'Content-Type': 'application/json',
-    //                     'Accept': 'application/json'
-    //                 }
-    //             })
-    //         const data = await GotData.json()
-    //         setWeather(data)
-    //     }
-    //     GetData()
-    // }, [City])
+    //Get user geolocation
+    function success(pos) {
+        let crd = pos.coords;
+        setUserLonLat({
+            latitude: crd.latitude,
+            longitude: crd.longitude
+        })
+    }
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+    navigator.geolocation.getCurrentPosition(success, error);
 
+   //Get user geolocation weather
+    const GetUserWeather = async () => {
+        await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${userLonLat.latitude}&lon=${userLonLat.longitude}&units=metric&APPID=${process.env.REACT_APP_API_KEY}`)
+            .then(res => {
+                console.log('GEOLOCDATA: ',res)
+            })
+    }
+
+    //Get weather by city from input area
     const GetData = async () => {
-        await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${WeatherCityChanger}&appid=3fdcc41eff12a3a45c84d5ac296850cd`)
+        await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${WeatherCityChanger}&appid=${process.env.REACT_APP_API_KEY}`)
             .then(res => {
                 const data = res.data
                 console.log(res);
                 setWeather(data)
-
             })
     }
 
+        const OnCityChange = (e) => {
+            setWeatherCityChanger(e.target.value)
+        }
 
-    async function GetUserLocation () {
-        await axios.get('https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,\n' +
-            '+Mountain+View,+CA&key=AIzaSyCXQHAI3kZw9279nsoMtaYAhIgTDiN-h1c')
-            .then(res => console.log('Ptro',res))
-            .catch((error)=> console.log("Xuy ", error))
+        return (
+            <div>
+                <CityWeatherInput OnCityChange={OnCityChange}
+                                  WeatherCityChanger={WeatherCityChanger}
+                />
+
+                <button
+                    onClick={() => {
+                        GetData();
+                        setShow(true);
+                        GetUserWeather();
+                    }}
+                >
+                    Submit City
+                </button>
+                {show && <WeatherForm name={weather.name}
+                                      timezone={weather.timezone}
+                />}
+            </div>
+
+        )
     }
 
-    geocode()
-
-    function geocode(){
-        let location = 'Lviv'
-        axios.get('https://maps.googleapis.com/maps/api/geocode/json',{
-            params:{
-                address: location,
-                key: 'AIzaSyADKtSKw3mAAwuoe0NEhK3Z0EOGjph7o6U'
-            }
-        })
-        .then(function (response){
-            //console.log(response)
-
-            console.log(response.data.results[0])
-            })
-        .catch(function (error){
-            console.log(error)
-        })
-    }
-    const OnCityChange = (e) => {
-        setWeatherCityChanger(e.target.value)
-    }
-
-    return (
-        <div>
-            <CityWeatherInput OnCityChange={OnCityChange}
-                              WeatherCityChanger={WeatherCityChanger}
-            />
-
-            <button
-                onClick={() => {
-                    GetData();
-                    // SubmitCity();
-                    setShow(true);
-                }}
-            >
-                Submit City
-            </button>
-
-            {show && <WeatherForm name={weather.name}
-                                  timezone={weather.timezone}
-            />}
-            <button
-                onClick={GetUserLocation}
-            >ShowCity
-            </button>
-
-        </div>
-
-    )
-}
 
 export default App
