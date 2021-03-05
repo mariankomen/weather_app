@@ -16,7 +16,6 @@ const CityWeatherInput = (props) => {
             <button
                 onClick={()=>{
                     props.GetData();
-                    props.setShow(true);
                     props.GetUserWeather();
                 }}
             >Click</button>

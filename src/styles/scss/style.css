@@ -3,4 +3,13 @@
   padding: 0;
 }
 
+li {
+  list-style: none;
+}
+
+.weather-components {
+  display: flex;
+  justify-content: space-between;
+}
+
 /*# sourceMappingURL=style.css.map */
