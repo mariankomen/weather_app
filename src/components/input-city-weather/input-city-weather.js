@@ -23,7 +23,6 @@ const InputCityWeather = ({userGeoWeather}) => {
                     <li>Temperature: {userGeoWeather.temperatureC} °C</li>
                 </ul>
             </div>
-
         </div>
     )
 }
